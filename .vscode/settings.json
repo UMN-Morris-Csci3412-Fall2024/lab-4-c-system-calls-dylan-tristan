@@ -36,5 +36,8 @@
         "valgrind",
         "Vlcn",
         "wikibook"
-    ]
+    ],
+    "files.associations": {
+        "stdio.h": "c"
+    }
 }
