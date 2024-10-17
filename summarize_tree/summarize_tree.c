@@ -16,6 +16,13 @@ bool is_dir(const char* path) {
    * return value from stat() in case there is a problem, e.g., maybe the
    * the file doesn't actually exist.
    */
+   struct stat buf;
+   if (stat(path, &buf) != 0) {
+     perror("stat");
+     return false;
+    
+   }
+    return S_ISDIR(buf.st_mode);
 }
 
 /* 
@@ -36,6 +43,26 @@ void process_directory(const char* path) {
    * with a matching call to chdir() to move back out of it when you're
    * done.
    */
+  DIR* dir = opendir(path);
+  if (!dir) {
+    perror("opendir");
+    return;
+  }
+  // loop through entries and process them
+  struct dirent* entry;
+  chdir(path);
+  num_dirs++;
+  
+  while ((entry = readdir(dir)) != NULL) {
+    if (strcmp (entry-> d_name, ".") == 0 || strcmp (entry-> d_name, "..") == 0) {
+      continue;
+    }
+    // if dir is not . or .. then process
+    process_path (entry->d_name);
+  }
+  
+  chdir("..");
+  closedir(dir);
 }
 
 void process_file(const char* path) {
@@ -43,6 +70,7 @@ void process_file(const char* path) {
    * Update the number of regular files.
    * This is as simple as it seems. :-)
    */
+   num_regular++;
 }
 
 void process_path(const char* path) {
